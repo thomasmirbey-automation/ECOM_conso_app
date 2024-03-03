@@ -1,0 +1,21 @@
+# Utilisez l'image de base souhaitée (par exemple, mariadb)
+FROM mariadb
+
+# Définissez le nom du conteneur
+ENV container_name="mariadb-docker"
+
+# Vérifiez si le conteneur existe
+RUN if docker ps -a --format '{{.Names}}' | grep -q "^$container_name$"; then \
+        echo "Le conteneur $container_name existe." ; \
+        docker start $container_name ; \
+    else \
+        echo "Le conteneur $container_name n'existe pas." ; \
+        docker run -d --name $container_name -e MYSQL_ROOT_PASSWORD=tpRT9025 -p 3306:3306 -v mariadb_save:/var/lib/mysql mariadb ; \
+        docker exec $container_name sh -c "apt update" ; \
+        docker exec $container_name sh -c "apt install -y mysql-client" ; \
+        #docker cp ddb.sql $container_name:/ddb.sql ; \
+        #docker cp procedures.sql $container_name:/procedures.sql ; \
+        docker exec -it $container_name bash -c "echo 'CREATE DATABASE ecomddb;' | mysql -uroot -p'tpRT9025'" ; \
+        docker exec -i $container_name mysql -uroot -p"tpRT9025" -D ecomddb < ddb.sql ; \
+        #docker exec -i $container_name mysql -uroot -p"tpRT9025" -D ecomddb < procedures.sql ; \
+    fi
