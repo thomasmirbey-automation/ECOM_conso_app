@@ -1,0 +1,4 @@
+Time,Action,Status
+16:30:09,connexion to MQTT Broker,OK
+16:30:09,retrieve all plugs from database,error
+16:30:09,End of execution : 0.0014429092407226562s,error
